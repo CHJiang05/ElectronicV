@@ -1,3 +1,5 @@
+package com.example.electronicv.Utils;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -20,7 +22,7 @@ public class SwaggerConfig {
                         .version("1.0.0")
                         .build())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.example.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.example.electronicv.Controller"))
                 .paths(PathSelectors.any())
                 .build();
     }

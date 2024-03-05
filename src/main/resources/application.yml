@@ -1,1 +1,29 @@
-
+server:
+  port: 8087
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    jedis:
+      pool:
+        min-idle: 10
+        max-active: 50
+        max-idle: 20
+  mvc:
+      path match:
+        matching-strategy: ant_path_matcher
+      view:
+        prefix: /WEB-INF/jsp/
+        suffix: .jsp
+  datasource:
+    username: root
+    password: (hjj)2005
+    url: jdbc:mysql://localhost:3306/etp?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+# Swagger
+swagger:
+  enabled: true
+#  thymeleaf:
+#    prefix: classpath:/templates/
+#    suffix: .html
+#    cache: false
