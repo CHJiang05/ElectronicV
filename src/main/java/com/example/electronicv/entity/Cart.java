@@ -22,7 +22,7 @@ public class Cart {
     @ApiModelProperty(value = "商品介绍", required = true, example = "1")
     private String date;
     @ApiModelProperty(value = "购物车图片", required = true, example = "1")
-    private String imageUrl;
+    private String imageurl;
     @ApiModelProperty(value = "购物加价格", required = true, example = "100")
     private Integer price;
     @ApiModelProperty(value = "购物车时间", required = true, example = "100")
