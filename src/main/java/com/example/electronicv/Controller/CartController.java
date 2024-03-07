@@ -45,12 +45,13 @@ public class CartController {
 
     @ApiOperation("提交购买")
     @CrossOrigin
-    @RequestMapping(value = "/purchase",method = RequestMethod.DELETE)
-    @ResponseStatus(code= HttpStatus.NO_CONTENT)
-    public Result<?> purchase(@RequestBody Cart cart){
-        QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("name",cart.getName());
-        cartMapper.delete(queryWrapper);
+    @RequestMapping(value = "/purchase",method = RequestMethod.POST)
+    public Result<?> purchase(@RequestBody List<Cart> cart) {
+        for (int i = 0; i < cart.size(); i++) {
+            QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("name", cart.get(i).getName());
+            cartMapper.delete(queryWrapper);
+        }
         return Result.success();
     }
 

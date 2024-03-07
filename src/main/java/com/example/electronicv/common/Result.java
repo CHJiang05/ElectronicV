@@ -3,8 +3,8 @@ package com.example.electronicv.common;
 public class Result<T> {
     private String code;
     private String msg;
-    private T data;
-
+    private T data;0
+2
     public String getCode() {
         return code;
     }
