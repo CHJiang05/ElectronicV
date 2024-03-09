@@ -55,4 +55,12 @@ public class CartController {
         return Result.success();
     }
 
+    @ApiOperation("加入购物车")
+    @CrossOrigin
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
+    public Result<?> add(@RequestBody Cart cart)
+    {
+        cartMapper.insert(cart);
+        return Result.success();
+    }
 }
