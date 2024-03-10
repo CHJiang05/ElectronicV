@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -39,15 +40,33 @@ public class UserController {
         {
             return Result.error("-1","用户名已重复");
         }
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String originalPassword = user.getPassword();
+
+        String encodedPassword = passwordEncoder.encode(originalPassword);
+        String password=originalPassword+encodedPassword;
+        user.setPassword(password);
         userMapper.insert(user);
         return Result.success();
     }
     @CrossOrigin
     @PostMapping("/login")
     public Result<?> login(@RequestBody User user){
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        // 需要加密的原始密码
+        String originalPassword = user.getPassword();
+
+        // 使用 BCrypt 进行密码加密
+        String encodedPassword = passwordEncoder.encode(originalPassword);
+        String password=originalPassword+encodedPassword;
+
+        // 输出加密后的密码
+        System.out.println(user.getPassword() + originalPassword);
         User res = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, user.getUsername())
-                .eq(User::getPassword, user.getPassword()));
+                .eq(User::getPassword, password));
         if(res.getUsername().isEmpty())
         {
             return Result.error("-1","用户名或密码错误");

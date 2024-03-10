@@ -3,8 +3,10 @@ package com.example.electronicv.Controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.electronicv.Mapper.CartMapper;
+import com.example.electronicv.Mapper.SystemCategoryMapper;
 import com.example.electronicv.common.Result;
 import com.example.electronicv.entity.Cart;
+import com.example.electronicv.entity.SystemCategory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ public class CartController {
     @Autowired
     @Resource
     private CartMapper cartMapper;
+    private SystemCategoryMapper systemCategoryMapper;
 
     @ApiOperation("获取购物车")
     @CrossOrigin
@@ -58,8 +61,17 @@ public class CartController {
     @ApiOperation("加入购物车")
     @CrossOrigin
     @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public Result<?> add(@RequestBody Cart cart)
+    public Result<?> add(@RequestBody Integer id,String time)
     {
+        SystemCategory systemCategory=systemCategoryMapper.selectById(id);
+        Cart cart=new Cart(
+                null,
+                systemCategory.getName(),
+                systemCategory.getUrl(),
+                systemCategory.getLeaf(),
+                time,
+                null
+        );
         cartMapper.insert(cart);
         return Result.success();
     }
