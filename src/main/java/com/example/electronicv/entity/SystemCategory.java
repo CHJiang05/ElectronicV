@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel("数据库字段")
-@TableName("system_category")
+@TableName("sys_category")
 public class SystemCategory {
     @ApiModelProperty(value = "ID", required = true, example = "1")
     @TableId(type = IdType.AUTO)

@@ -1,6 +1,5 @@
 package com.example.electronicv.Controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Api(tags = "API接口")
@@ -33,26 +31,27 @@ public class BizSellOrderController {
 
     @ApiOperation("提交购买")
     @CrossOrigin
-    @RequestMapping(value="/commit",method = RequestMethod.POST)
-    public Result<?> commit(@RequestBody List<BizSellOrder> bizSellOrders){
-        for(int i=0;i<bizSellOrders.size();i++)
-        {
+    @RequestMapping(value = "/commit", method = RequestMethod.POST)
+    public Result<?> commit(@RequestBody List<BizSellOrder> bizSellOrders) {
+        for (int i = 0; i < bizSellOrders.size(); i++) {
             bizSellOrderMapper.insert(bizSellOrders.get(i));
         }
 
         return Result.success();
     }
+
     @ApiOperation("获取数据")
     @CrossOrigin
-    @RequestMapping(value="/commitsub",method = RequestMethod.POST)
-    public Result<?> commitsub(@RequestBody List<String> name){
+    @RequestMapping(value = "/commitsub", method = RequestMethod.POST)
+    public Result<?> commitsub(@RequestBody List<String> name) {
 
         QueryWrapper<BizSellOrder> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("id").last("LIMIT 1");
+        BizSellOrder res0 = bizSellOrderMapper.selectOne(queryWrapper);
         BizSellOrder res = bizSellOrderMapper.selectOne(queryWrapper);
-        Long time= res.getCtime();
-        List<BizSellOrder> bizSellOrders=bizSellOrderMapper.selectList(Wrappers.<BizSellOrder>lambdaQuery().eq(BizSellOrder::getCtime,time));
-        for(int i= 0;i< name.size();i++) {
+        Long time = res.getCtime();
+        List<BizSellOrder> bizSellOrders = bizSellOrderMapper.selectList(Wrappers.<BizSellOrder>lambdaQuery().eq(BizSellOrder::getCtime, time));
+        for (int i = 0; i < name.size(); i++) {
 
             UpdateWrapper<SystemCategory> updateWrapper = new UpdateWrapper<>();
             updateWrapper.eq("name", name.get(i))
@@ -69,20 +68,17 @@ public class BizSellOrderController {
             );
             bizSellOrderSub.setCname(name.get(i));
             bizSellOrderSub.setPid(bizSellOrders.get(i).getId().toString());
-            QueryWrapper<SystemCategory> queryWrapper1=new QueryWrapper<>();
-            queryWrapper1.eq("name",name.get(i));
-            SystemCategory res2=systemCategoryMapper.selectOne(queryWrapper1);
+            QueryWrapper<SystemCategory> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("name", name.get(i));
+            SystemCategory res2 = systemCategoryMapper.selectOne(queryWrapper1);
             bizSellOrderSub.setRemain_num(res2.getCtime());
             bizSellOrderSub.setPrice(res2.getLeaf());
+            bizSellOrderSub.setCid(res2.getId());
             bizSellOrderSubMapper.insert(bizSellOrderSub);
-                return Result.success();
+
+
         }
-
-
-
-
 
         return Result.success();
     }
-
 }
