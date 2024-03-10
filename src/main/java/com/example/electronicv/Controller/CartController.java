@@ -6,6 +6,7 @@ import com.example.electronicv.Mapper.CartMapper;
 import com.example.electronicv.Mapper.SystemCategoryMapper;
 import com.example.electronicv.common.Result;
 import com.example.electronicv.entity.Cart;
+import com.example.electronicv.entity.MyRequest;
 import com.example.electronicv.entity.SystemCategory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,6 +26,8 @@ public class CartController {
     @Autowired
     @Resource
     private CartMapper cartMapper;
+    @Autowired
+    @Resource
     private SystemCategoryMapper systemCategoryMapper;
 
     @ApiOperation("获取购物车")
@@ -61,15 +64,15 @@ public class CartController {
     @ApiOperation("加入购物车")
     @CrossOrigin
     @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public Result<?> add(@RequestBody Integer id,String time)
+    public Result<?> add(@RequestBody MyRequest myRequest)
     {
-        SystemCategory systemCategory=systemCategoryMapper.selectById(id);
+        SystemCategory systemCategory=systemCategoryMapper.selectById(myRequest.getId());
         Cart cart=new Cart(
                 null,
                 systemCategory.getName(),
                 systemCategory.getUrl(),
                 systemCategory.getLeaf(),
-                time,
+                myRequest.getTime(),
                 null
         );
         cartMapper.insert(cart);

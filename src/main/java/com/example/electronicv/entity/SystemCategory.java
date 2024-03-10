@@ -19,13 +19,16 @@ public class SystemCategory {
     @TableId(type = IdType.AUTO)
     private Integer id;
     @ApiModelProperty(value = "产品id", required = true, example = "1")
-    private String url;
+    private Integer pid;
     @ApiModelProperty(value = "产品名称", required = true, example = "1")
     private String name;
     @ApiModelProperty(value = "价格", required = true, example = "100")
     private Integer leaf;
     @ApiModelProperty(value = "库存", required = true, example = "100")
     private Long ctime;
+    @ApiModelProperty(value = "库存", required = true, example = "100")
+    private String url;
+
 
 
 }

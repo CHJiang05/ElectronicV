@@ -26,7 +26,11 @@ public class BizSellOrderController {
     @Autowired
     @Resource
     private BizSellOrderMapper bizSellOrderMapper;
+    @Autowired
+    @Resource
     private BizSellOrderSubMapper bizSellOrderSubMapper;
+    @Autowired
+    @Resource
     private SystemCategoryMapper systemCategoryMapper;
 
     @ApiOperation("提交购买")
