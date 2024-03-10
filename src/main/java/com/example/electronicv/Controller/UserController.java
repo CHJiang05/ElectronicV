@@ -33,49 +33,50 @@ public class UserController {
     @ApiOperation("注册")
     @CrossOrigin
     @PostMapping("/register")
-    public Result<?> register(@RequestBody User user){
-        User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername,user.getUsername()));
+    public Result<?> register(@RequestBody User user) {
+        User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername, user.getUsername()));
 
-        if(res.getPassword().isEmpty())
-        {
-            return Result.error("-1","用户名已重复");
+        if (res != null) {
+            return Result.error("-1", "用户名已重复");
         }
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String originalPassword = user.getPassword();
 
         String encodedPassword = passwordEncoder.encode(originalPassword);
-        String password=originalPassword+encodedPassword;
-        user.setPassword(password);
+        user.setPassword(encodedPassword);
         userMapper.insert(user);
         return Result.success();
     }
+
     @CrossOrigin
     @PostMapping("/login")
-    public Result<?> login(@RequestBody User user){
+    public Result<?> login(@RequestBody User user) {
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        // 假设user是请求中传来的用户对象，包含登录时输入的用户名和密码
+        User userFromDb = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getUsername, user.getUsername()));
 
-        // 需要加密的原始密码
-        String originalPassword = user.getPassword();
-
-        // 使用 BCrypt 进行密码加密
-        String encodedPassword = passwordEncoder.encode(originalPassword);
-        String password=originalPassword+encodedPassword;
-
-        // 输出加密后的密码
-        System.out.println(user.getPassword() + originalPassword);
-        User res = userMapper.selectOne(new LambdaQueryWrapper<User>()
-                .eq(User::getUsername, user.getUsername())
-                .eq(User::getPassword, password));
-        if(res.getUsername().isEmpty())
-        {
-            return Result.error("-1","用户名或密码错误");
+// 检查是否找到了用户
+        if (userFromDb == null) {
+            return Result.error("-1", "用户名或密码错误");
         }
-        String token = TokenUtils.genToken(res);
-        res.setUsertoken(token);
-        LoginUser.addVisitCount();
-        return Result.success(res);
-    }
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+// 使用BCrypt进行密码匹配验证
+        if (!passwordEncoder.matches(user.getPassword(), userFromDb.getPassword())) {
+            // 如果密码不匹配
+            return Result.error("-1", "用户名或密码错误");
+        }
 
+// 如果用户名和密码都匹配，则生成Token
+        String token = TokenUtils.genToken(userFromDb);
+        userFromDb.setUsertoken(token);
+
+// 可以增加用户访问计数
+        LoginUser.addVisitCount();
+
+// 返回包含用户信息和Token的成功响应
+        return Result.success(userFromDb);
+
+    }
 }
 
