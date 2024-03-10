@@ -35,6 +35,8 @@ public class BizSellOrderController {
     public Result<?> commit(@RequestBody List<BizSellOrder> bizSellOrders) {
         for (int i = 0; i < bizSellOrders.size(); i++) {
             bizSellOrderMapper.insert(bizSellOrders.get(i));
+            Long id =bizSellOrders.get(i).getId();
+
         }
 
         return Result.success();
@@ -45,12 +47,17 @@ public class BizSellOrderController {
     @RequestMapping(value = "/commitsub", method = RequestMethod.POST)
     public Result<?> commitsub(@RequestBody List<String> name) {
 
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         QueryWrapper<BizSellOrder> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("id").last("LIMIT 1");
-        BizSellOrder res0 = bizSellOrderMapper.selectOne(queryWrapper);
         BizSellOrder res = bizSellOrderMapper.selectOne(queryWrapper);
         Long time = res.getCtime();
-        List<BizSellOrder> bizSellOrders = bizSellOrderMapper.selectList(Wrappers.<BizSellOrder>lambdaQuery().eq(BizSellOrder::getCtime, time));
+
+        List<BizSellOrder> bizSellOrders = bizSellOrderMapper.selectList(Wrappers.<BizSellOrder>lambdaQuery().eq(BizSellOrder::getCtime, time).orderByAsc(BizSellOrder::getId));
         for (int i = 0; i < name.size(); i++) {
 
             UpdateWrapper<SystemCategory> updateWrapper = new UpdateWrapper<>();
