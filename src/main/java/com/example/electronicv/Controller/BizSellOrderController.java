@@ -1,6 +1,5 @@
 package com.example.electronicv.Controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -38,9 +37,8 @@ public class BizSellOrderController {
     @CrossOrigin
     @RequestMapping(value = "/commit", method = RequestMethod.POST)
     public Result<?> commit(@RequestBody List<BizSellOrder> bizSellOrders) {
-        for (int i = 0; i < bizSellOrders.size(); i++) {
-            bizSellOrderMapper.insert(bizSellOrders.get(i));
-            Long id =bizSellOrders.get(i).getId();
+        for (BizSellOrder bizSellOrder : bizSellOrders) {
+            bizSellOrderMapper.insert(bizSellOrder);
 
         }
 
@@ -105,5 +103,6 @@ public class BizSellOrderController {
         }
         return Result.success(res);
     }
+
 
 }

@@ -9,7 +9,6 @@ import com.example.electronicv.Mapper.UserMapper;
 import com.example.electronicv.Utils.TokenUtils;
 import com.example.electronicv.common.Result;
 import com.example.electronicv.entity.MyModify;
-import com.example.electronicv.entity.SystemCategory;
 import com.example.electronicv.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -103,5 +102,25 @@ public class UserController {
         userMapper.update(res,updateWrapper);
         return Result.success(res);
     }
+
+
+    @ApiOperation("完善信息")
+    @CrossOrigin
+    @RequestMapping(value = "/improve",method = RequestMethod.POST)
+    public Result<?> improve(@RequestBody User user)
+    {
+        User res=userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername,user.getUsername()));
+        if(res==null)
+        {
+            return Result.error("-1","出了点小意外呢");
+        }
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("username",user.getUsername());
+        res.setEmail(user.getEmail());
+        res.setAddress(user.getAddress());
+        userMapper.update(res,updateWrapper);
+        return Result.success(res);
+    }
+
 }
 
