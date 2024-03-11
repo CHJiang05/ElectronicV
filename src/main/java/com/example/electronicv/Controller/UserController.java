@@ -2,11 +2,14 @@ package com.example.electronicv.Controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.electronicv.LoginUser;
 import com.example.electronicv.Mapper.UserMapper;
 import com.example.electronicv.Utils.TokenUtils;
 import com.example.electronicv.common.Result;
+import com.example.electronicv.entity.MyModify;
+import com.example.electronicv.entity.SystemCategory;
 import com.example.electronicv.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -77,6 +80,28 @@ public class UserController {
 // 返回包含用户信息和Token的成功响应
         return Result.success(userFromDb);
 
+    }
+
+    @ApiOperation("修改密码")
+    @CrossOrigin
+    @RequestMapping(value = "/modify",method = RequestMethod.POST)
+    public Result<?> modify(@RequestBody MyModify modify)
+    {
+        User res =userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername,modify.getUsername()));
+        if(res==null)
+        {
+            return Result.error("-1","用户名不存在");
+        }
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if(!passwordEncoder.matches(modify.getPassword(), res.getPassword()))
+        {
+            return Result.error("-1","密码验证错误");
+        }
+        res.setPassword(passwordEncoder.encode(modify.getModify()));
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("username",modify.getUsername());
+        userMapper.update(res,updateWrapper);
+        return Result.success(res);
     }
 }
 

@@ -1,5 +1,6 @@
 package com.example.electronicv.Controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -92,4 +93,17 @@ public class BizSellOrderController {
 
         return Result.success();
     }
+    @ApiOperation("购买确认")
+    @CrossOrigin
+    @RequestMapping(value = "/confirm",method = RequestMethod.POST)
+    public Result<?> confirm(@RequestBody MyRequest myRequest)
+    {
+        SystemCategory res=systemCategoryMapper.selectById(myRequest.getId());
+        if(res==null)
+        {
+            return Result.error("-1","该商品已下架");
+        }
+        return Result.success(res);
+    }
+
 }
