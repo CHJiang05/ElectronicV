@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.example.electronicv.Mapper.BizSellOrderMapper;
-import com.example.electronicv.Mapper.BizSellOrderSubMapper;
-import com.example.electronicv.Mapper.DetailsMapper;
-import com.example.electronicv.Mapper.SystemCategoryMapper;
+import com.example.electronicv.Mapper.*;
 import com.example.electronicv.common.Result;
 import com.example.electronicv.entity.*;
 import io.swagger.annotations.Api;
@@ -28,22 +25,21 @@ public class BizSellOrderController {
     @Autowired
     @Resource
     private BizSellOrderMapper bizSellOrderMapper;
-    @Autowired
     @Resource
     private BizSellOrderSubMapper bizSellOrderSubMapper;
-    @Autowired
     @Resource
     private SystemCategoryMapper systemCategoryMapper;
-    @Autowired
     @Resource
     private DetailsMapper detailsMapper;
-
+    @Resource
+    private UserVoMapper userVoMapper;
     @ApiOperation("提交购买")
     @CrossOrigin
     @RequestMapping(value = "/commit", method = RequestMethod.POST)
     public Result<?> commit(@RequestBody List<BizSellOrder> bizSellOrders) {
         for (BizSellOrder bizSellOrder : bizSellOrders) {
             bizSellOrderMapper.insert(bizSellOrder);
+
 
         }
 
@@ -94,6 +90,18 @@ public class BizSellOrderController {
             bizSellOrderSub.setPrice(res2.getLeaf());
             bizSellOrderSub.setCid(res2.getId());
             bizSellOrderSubMapper.insert(bizSellOrderSub);
+            UserVo userVo=new UserVo(
+                    null,
+                    "hxc",
+                    null,
+                    bizSellOrderSub.getCname(),
+                    "school",
+                    null
+
+
+            );
+
+            userVoMapper.insert(userVo);
 
 
         }
@@ -102,7 +110,7 @@ public class BizSellOrderController {
     }
     @ApiOperation("购买确认")
     @CrossOrigin
-    @RequestMapping(value = "/confirm",method = RequestMethod.POST)
+    @RequestMapping(value = "/confirm",method =RequestMethod.POST)
     public Result<?> confirm(@RequestBody MyRequest myRequest)
     {
         SystemCategory res=systemCategoryMapper.selectById(myRequest.getId());
@@ -116,8 +124,8 @@ public class BizSellOrderController {
     @ApiOperation("图片获取")
     @CrossOrigin
     @RequestMapping(value = "/picture",method = RequestMethod.POST)
-    public Result<?> picture(@RequestBody Details detail){
-        List<Details> res=detailsMapper.selectList(new LambdaQueryWrapper<Details>().eq(Details::getId,detail.getId()));
+    public Result<?> picture(@RequestBody MyRequest myRequest){
+        List<Details> res=detailsMapper.selectList(new LambdaQueryWrapper<Details>().eq(Details::getPid,myRequest.getId()));
         if(res==null)
         {
             return Result.error("-1","图片获取失败");

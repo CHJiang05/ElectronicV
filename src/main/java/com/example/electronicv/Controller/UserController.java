@@ -6,10 +6,13 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.electronicv.LoginUser;
 import com.example.electronicv.Mapper.UserMapper;
+import com.example.electronicv.Mapper.UserVoMapper;
 import com.example.electronicv.Utils.TokenUtils;
 import com.example.electronicv.common.Result;
 import com.example.electronicv.entity.MyModify;
+import com.example.electronicv.entity.MyRequest;
 import com.example.electronicv.entity.User;
+import com.example.electronicv.entity.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 @Api(tags = "API接口")
@@ -30,6 +34,8 @@ public class UserController {
 
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private UserVoMapper userVoMapper;
 
 
     @ApiOperation("注册")
@@ -104,21 +110,69 @@ public class UserController {
     }
 
 
-    @ApiOperation("完善信息")
+    @ApiOperation("修改地址")
     @CrossOrigin
-    @RequestMapping(value = "/improve",method = RequestMethod.POST)
-    public Result<?> improve(@RequestBody User user)
+    @RequestMapping(value = "/address",method = RequestMethod.POST)
+    public Result<?> address(@RequestBody User user)
     {
         User res=userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername,user.getUsername()));
         if(res==null)
         {
-            return Result.error("-1","出了点小意外呢");
+            return Result.error("-1","你被开除了");
         }
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("username",user.getUsername());
-        res.setEmail(user.getEmail());
         res.setAddress(user.getAddress());
         userMapper.update(res,updateWrapper);
+        return Result.success(res);
+    }
+
+    @ApiOperation("修改个人介绍")
+    @CrossOrigin
+    @RequestMapping(value = "/introduction",method = RequestMethod.POST)
+    public Result<?> introduction(@RequestBody User user)
+    {
+        User res=userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername,user.getUsername()));
+        if(res==null)
+        {
+            return Result.error("-1","你被开除了");
+        }
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("username",user.getUsername());
+        res.setAddress(user.getIntroduction());
+        userMapper.update(res,updateWrapper);
+        return Result.success(res);
+    }
+
+    @ApiOperation("获取信息")
+    @CrossOrigin
+    @RequestMapping(value = "/info",method = RequestMethod.POST)
+    public  Result<?> info(@RequestBody User user)
+    {
+        User res =userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername,user.getUsername()));
+        if(res==null)
+        {
+            return Result.error("-1","出故障了");
+        }
+        return Result.success(res);
+    }
+
+    @ApiOperation("获取订单信息")
+    @CrossOrigin
+    @RequestMapping(value = "/getOrder",method = RequestMethod.POST)
+    public  Result<?> get_order(@RequestBody User user)
+    {
+        User temp=userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername,user.getUsername()));
+        String address=temp.getAddress();
+        String phone= temp.getPhonenumber();
+        List<UserVo> res =userVoMapper.selectList(new LambdaQueryWrapper<UserVo>().eq(UserVo::getUsername,user.getUsername()));
+        for (UserVo re : res) {
+            re.setAddress(address);
+            re.setPhone(phone);
+        }
+        if(res.isEmpty())        {
+            return Result.error("-1","出故障了");
+        }
         return Result.success(res);
     }
 

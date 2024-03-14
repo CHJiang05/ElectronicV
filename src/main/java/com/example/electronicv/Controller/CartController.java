@@ -26,7 +26,6 @@ public class CartController {
     @Autowired
     @Resource
     private CartMapper cartMapper;
-    @Autowired
     @Resource
     private SystemCategoryMapper systemCategoryMapper;
 
@@ -44,7 +43,7 @@ public class CartController {
     @ResponseStatus(code= HttpStatus.NO_CONTENT)
     public Result<?> delete(@RequestBody Cart cart){
         QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("name",cart.getName());
+        queryWrapper.eq("date",cart.getDate());
         cartMapper.delete(queryWrapper);
         return Result.success();
     }

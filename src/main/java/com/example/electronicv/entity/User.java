@@ -32,5 +32,9 @@ public class User {
     @ApiModelProperty(value = "令牌",  example = "NULL")
     @TableField(exist = false)
     private String usertoken;
+    @ApiModelProperty(value = "个人介绍",  example = "pkingU")
+    private String introduction;
+    @ApiModelProperty(value = "头像",  example = "pkingU")
+    private String url;
 
 }
